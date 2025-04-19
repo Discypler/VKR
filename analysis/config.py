@@ -38,3 +38,22 @@ parameters = {
     "ela_quality": 90,
     "ela_difference_threshold": 8
 }
+
+META_WEIGHTS = {
+    "texture_entropy_mean": 0.1057,
+    "fft_peak": 0.1046,
+    "canny": 0.0968,
+    "gaussian_noise": 0.0967,
+    "median_diff_std": 0.0885,
+    "sobel": 0.0829,
+    "color_saturation": 0.0796,
+    "jpeg_artifact": 0.0674,
+    "texture_lbp_var": 0.0648,
+    "ssim_drop": 0.0638,
+    "histogram": 0.0596,
+    "stat_std_anomaly": 0.0561,
+    "simple_shape": 0.0207,
+    "strange_shape": 0.0131
+}
+
+META_SCORE_THRESHOLD = 0.7

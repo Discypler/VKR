@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from analysis.pipeline_test import run_pipeline
 
-IMAGE_DIR = r"C:\Code\data\clean\cifar10"
+IMAGE_DIR = r"C:\Code\data\poisoned\cifar10"
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 SAVE_EVERY = 100
@@ -36,7 +36,8 @@ def save_all_results():
             "suspicious": decision.get("suspicious", False),
             "triggered_count": len(decision.get("triggered_types", [])),
             "triggered_types": ";".join(decision.get("triggered_types", [])),
-            "scale_factor": decision.get("scale_factor", -1)
+            "scale_factor": decision.get("scale_factor", -1),
+            "meta_score": decision.get("meta_score", -1)
         }
         summary = decision.get("summary", {})
         if isinstance(summary, dict):
