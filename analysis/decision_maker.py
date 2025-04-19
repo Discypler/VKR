@@ -1,31 +1,37 @@
-
-# decision_maker.py
-
-from collections import defaultdict
-from analysis import config
-
-def decide_from_anomalies(anomalies, strategy="threshold_sum", verbose=False):
-    """
-    Простейший решатель, основанный на стратегии объединения аномалий.
-    """
-    type_scores = defaultdict(list)
-    for a in anomalies:
-        type_scores[a['type']].append(a['score'])
-
-    # Стратегия: если ≥ 3 типов аномалий превышают порог → заражение
-    triggered = []
-    for t, scores in type_scores.items():
-        mean_score = sum(scores) / len(scores)
-        threshold = config.thresholds.get(t, 0)
-        if mean_score > threshold:
-            triggered.append((t, mean_score))
-            if verbose:
-                print(f"⚠️ {t} → mean={mean_score:.2f} > threshold={threshold}")
-
-    result = {
-        "suspicious": len(triggered) >= 3,
-        "triggered_types": triggered,
-        "total_types": len(type_scores),
-        "summary": {t: sum(v) / len(v) for t, v in type_scores.items()}
+def decide_from_anomalies(anomalies, scale_factor=1.0, verbose=False):
+    base_thresholds = {
+        "jpeg_artifact": 6.0,
+        "ssim_drop": 0.25,
+        "median_diff_std": 5.0,
+        "noise_sniffer": 5.0,
+        "histogram": 1.0,
+        "fft_peak": 1e5,
+        "color_saturation": 1.0,
+        "stat_std_anomaly": 20.0
     }
-    return result
+
+    adjusted_thresholds = {}
+    for key, val in base_thresholds.items():
+        if scale_factor < 1.0:
+            adjusted_thresholds[key] = val * (1.5 - scale_factor)
+        elif scale_factor > 2.0:
+            adjusted_thresholds[key] = val * 0.8
+        else:
+            adjusted_thresholds[key] = val
+
+    triggered = []
+    for t, score in anomalies.items():
+        threshold = adjusted_thresholds.get(t, None)
+        if threshold is not None and score > threshold:
+            triggered.append((t, score))
+
+    suspicious = len(triggered) >= 3
+
+    if verbose:
+        for t, score in triggered:
+            print(f"⚠️ {t} → score={score:.2f} > threshold={adjusted_thresholds[t]:.2f}")
+
+    return {
+        "suspicious": suspicious,
+        "triggered_types": [t for t, _ in triggered]
+    }

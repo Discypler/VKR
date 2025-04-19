@@ -1,11 +1,12 @@
 # batch_process_folder.py
 
- import os
+import os
 import json
 import pandas as pd
 from analysis.pipeline_test import run_pipeline
+from pathlib import Path
 
-IMAGE_DIR = os.path.join("data", "poisoned", "cifar10")
+IMAGE_DIR = Path("C:/code/data/clean/cifar10")
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 SAVE_EVERY = 1000
