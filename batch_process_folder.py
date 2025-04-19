@@ -1,15 +1,12 @@
-# batch_process_folder.py
-
 import os
 import json
 import pandas as pd
 from analysis.pipeline_test import run_pipeline
-from pathlib import Path
 
-IMAGE_DIR = Path("C:/code/data/clean/cifar10")
+IMAGE_DIR = r"C:\Code\data\clean\cifar10"
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
-SAVE_EVERY = 1000
+SAVE_EVERY = 100
 JSON_PATH = "analysis_results.json"
 CSV_PATH = "analysis_results.csv"
 
@@ -31,16 +28,22 @@ def save_all_results():
         json.dump(global_results, f, indent=2, ensure_ascii=False)
     print(f"✅ JSON сохранён в {JSON_PATH}")
 
-    summary = []
+    rows = []
     for res in global_results:
+        decision = res.get("decision", {})
         row = {
-            "image": res["image_path"],
-            "suspicious": res["decision"].get("suspicious", False),
+            "image": res.get("image_path"),
+            "suspicious": decision.get("suspicious", False),
+            "triggered_count": len(decision.get("triggered_types", [])),
+            "triggered_types": ";".join(decision.get("triggered_types", [])),
+            "scale_factor": decision.get("scale_factor", -1)
         }
-        row.update(res["decision"].get("summary", {}))
-        summary.append(row)
+        summary = decision.get("summary", {})
+        if isinstance(summary, dict):
+            row.update(summary)
+        rows.append(row)
 
-    df = pd.DataFrame(summary)
+    df = pd.DataFrame(rows)
     df.to_csv(CSV_PATH, index=False)
     print(f"📄 CSV сохранён в {CSV_PATH}")
 
