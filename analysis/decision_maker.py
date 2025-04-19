@@ -20,10 +20,12 @@ def decide_from_anomalies(anomalies, scale_factor=1.0, verbose=False):
             adjusted_thresholds[key] = val
 
     triggered = []
-    for t, score in anomalies.items():
-        threshold = adjusted_thresholds.get(t, None)
+    for anomaly in anomalies:
+        a_type = anomaly.get("type")
+        score = anomaly.get("score", 0)
+        threshold = adjusted_thresholds.get(a_type)
         if threshold is not None and score > threshold:
-            triggered.append((t, score))
+            triggered.append((a_type, score))
 
     suspicious = len(triggered) >= 3
 

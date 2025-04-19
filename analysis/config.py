@@ -35,3 +35,9 @@ JSON_PATH = "analysis_results.json"
 CSV_PATH = "analysis_results.csv"
 
 LOG_LEVEL = "INFO"
+
+parameters = {
+    "block_size": 16,
+    "ela_quality": 90,
+    "ela_difference_threshold": 8
+}
