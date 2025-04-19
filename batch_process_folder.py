@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from analysis.pipeline_test import run_pipeline
 
-IMAGE_DIR = r"C:\Code\data\clean\cifar10"
+IMAGE_DIR = r"C:\Code\data\poisoned\cifar10"
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 SAVE_EVERY = 100
