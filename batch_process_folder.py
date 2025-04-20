@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from analysis.pipeline_test import run_pipeline
 
-IMAGE_DIR = r"C:\Code\data\poisoned\cifar10"
+IMAGE_DIR = (r"C:\Code\data\poisoned\cifar10")
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 SAVE_EVERY = 100
@@ -31,6 +31,8 @@ def save_all_results():
     rows = []
     for res in global_results:
         decision = res.get("decision", {})
+        summary = decision.get("summary", {})
+
         row = {
             "image": res.get("image_path"),
             "suspicious": decision.get("suspicious", False),
@@ -39,9 +41,13 @@ def save_all_results():
             "scale_factor": decision.get("scale_factor", -1),
             "meta_score": decision.get("meta_score", -1)
         }
-        summary = decision.get("summary", {})
+
+        # Добавляем все метрики из summary
         if isinstance(summary, dict):
-            row.update(summary)
+            for k, v in summary.items():
+                if k not in row:
+                    row[k] = v
+
         rows.append(row)
 
     df = pd.DataFrame(rows)
